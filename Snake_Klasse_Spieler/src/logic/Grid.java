@@ -1,3 +1,5 @@
+package logic;
+
 import java.util.Random;
 
 public class Grid {
@@ -11,7 +13,7 @@ public class Grid {
 
     public static Cell[][] grid = new Cell[WIDTH][HEIGHT];
 
-    static void initGrid() {
+    public static void initGrid() {
         for (int i = 0; i < HEIGHT; i++) {
             for (int j = 0; j < WIDTH; j++) {
                 grid[j][i] = new Cell(Cell.states.EMPTY);

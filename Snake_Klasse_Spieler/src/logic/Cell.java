@@ -1,3 +1,5 @@
+package logic;
+
 public class Cell {
     public enum states{EMPTY, HEAD, BODY, APPLE}
     private states content;

@@ -1,5 +1,5 @@
-# Snake-Template  
-Vorgabe für Snake Projekt
+# logic.Snake-Template  
+Vorgabe für logic.Snake Projekt
 
 **Prozessmanagement-Links**  
 

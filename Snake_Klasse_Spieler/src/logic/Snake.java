@@ -1,3 +1,7 @@
+package logic;
+
+import IO.ProcessingOut;
+
 import java.util.ArrayList;
 
 public class Snake {
@@ -12,7 +16,7 @@ public class Snake {
 
     private directions facing;
 
-    Snake() {
+    public Snake() {
         facing = directions.UP;
 
         headPosX = Grid.getWidth() / 2;
@@ -22,11 +26,9 @@ public class Snake {
             bodyArrayX.add(headPosX);
             bodyArrayY.add(headPosY + i);
         }
-
-        Grid.updateGrid();
     }
 
-    public void move(directions heading) throws Exception {
+    public void move(directions heading) {
         if (heading == null) heading = facing;
         else facing = heading;
 
@@ -35,32 +37,35 @@ public class Snake {
 
         switch (heading) {
             case UP:
-                if (headPosY - 1 < 0) Main.tempGameOver();
+                if (headPosY - 1 < 0) ProcessingOut.tempGameOver();
                 headNewX = headPosX;
                 headNewY = headPosY - 1;
                 break;
             case DOWN:
-                if (headPosY + 1 >= Grid.getHeight()) Main.tempGameOver();
+                if (headPosY + 1 >= Grid.getHeight()) ProcessingOut.tempGameOver();
                 headNewX = headPosX;
                 headNewY = headPosY + 1;
                 break;
             case LEFT:
-                if (headPosX - 1 < 0) Main.tempGameOver();
+                if (headPosX - 1 < 0) ProcessingOut.tempGameOver();
                 headNewX = headPosX - 1;
                 headNewY = headPosY;
                 break;
             case RIGHT:
-                if (headPosX + 1 >= Grid.getWidth()) Main.tempGameOver();
+                if (headPosX + 1 >= Grid.getWidth()) ProcessingOut.tempGameOver();
                 headNewX = headPosX + 1;
                 headNewY = headPosY;
                 break;
             default:
-                throw new Exception("Invalid direction");
+                // this is only so the compiler doesn't complain
+                // if this case actually happens SOMEONE or SOMETHING severely fucked up
+                headNewX = 0;
+                headNewY = 0;
         }
 
         switch (Grid.grid[headNewX][headNewY].getContent()) {
             case BODY:
-                Main.tempGameOver();
+                ProcessingOut.tempGameOver();
                 break;
             case EMPTY:
                 for (int i = bodyArrayX.size() - 1; i > 0; i--) {
