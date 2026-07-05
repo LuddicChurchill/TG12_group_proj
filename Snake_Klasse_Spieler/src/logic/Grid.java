@@ -5,57 +5,64 @@ import java.util.Random;
 public class Grid {
     static Random r = new Random();
 
-    private static final int WIDTH = 20;
-    private static final int HEIGHT = 20;
+    private final int width;
+    private final int height;
 
-    private static int appleX;
-    private static int appleY;
+    private int appleX;
+    private int appleY;
 
-    public static Cell[][] grid = new Cell[WIDTH][HEIGHT];
+    public Cell[][] grid;
 
-    public static void initGrid() {
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
+
+    public Grid (int width, int height) {
+        this.width = width;
+        this.height = height;
+
+        grid = new Cell[width][height];
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 grid[j][i] = new Cell(Cell.states.EMPTY);
             }
         }
+
+        placeApple();
     }
 
-    public static int getWidth() {
-        return WIDTH;
+    public int getWidth() {
+        return width;
     }
 
-    public static int getHeight() {
-        return HEIGHT;
+    public int getHeight() {
+        return height;
     }
 
-    public static void placeApple() {
+    public void placeApple() {
         while (true) {
-            int tempX = r.nextInt(WIDTH);
-            int tempY = r.nextInt(HEIGHT);
+            int tempX = r.nextInt(width);
+            int tempY = r.nextInt(height);
 
             if (grid[tempX][tempY].isEmpty()) {
                 appleX = tempX;
                 appleY = tempY;
-                updateGrid();
                 break;
             }
         }
     }
 
-    public static void updateGrid() {
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
+    public void updateGrid(Snake snake) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 grid[j][i].setContent(Cell.states.EMPTY);
             }
         }
 
         grid[appleX][appleY].setContent(Cell.states.APPLE);
 
-        grid[Snake.headPosX][Snake.headPosY].setContent(Cell.states.HEAD);
+        grid[snake.headPosX][snake.headPosY].setContent(Cell.states.HEAD);
 
-        for(int i = 0; i < Snake.bodyArrayX.size(); i++) {
-            grid[Snake.bodyArrayX.get(i)][Snake.bodyArrayY.get(i)].setContent(Cell.states.BODY);
+        for (int i = 0; i < snake.bodyArrayX.size(); i++) {
+            grid[snake.bodyArrayX.get(i)][snake.bodyArrayY.get(i)].setContent(Cell.states.BODY);
         }
     }
 }

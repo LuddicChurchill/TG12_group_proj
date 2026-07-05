@@ -8,12 +8,11 @@ public class Spieler {
     private String passwort;
 
 
-
-    Spieler(int spielernr, String passwort, String name, int id){
-        this.spielernr=spielernr;
-        this.passwort=passwort;
-        this.name=name;
-        this.id=id;
+    Spieler(int spielernr, String passwort, String name, int id) {
+        this.spielernr = spielernr;
+        this.passwort = passwort;
+        this.name = name;
+        this.id = id;
     }
 
     public String getPasswort() {

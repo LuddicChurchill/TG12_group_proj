@@ -1,26 +1,27 @@
 package logic;
 
-import IO.ProcessingOut;
+import IO.Processing;
 
 import java.util.ArrayList;
 
 public class Snake {
-    public static int headPosX;
-    public static int headPosY;
+    public int headPosX;
+    public int headPosY;
 
-    public static ArrayList<Integer> bodyArrayX = new ArrayList<>();
-    public static ArrayList<Integer> bodyArrayY = new ArrayList<>();
+    private int applesEaten = 0;
+
+    protected ArrayList<Integer> bodyArrayX = new ArrayList<>();
+    protected ArrayList<Integer> bodyArrayY = new ArrayList<>();
 
     public enum directions {UP, DOWN, LEFT, RIGHT}
-
-
     private directions facing;
 
-    public Snake() {
+
+    public Snake(Grid grid) {
         facing = directions.UP;
 
-        headPosX = Grid.getWidth() / 2;
-        headPosY = Grid.getHeight() / 2;
+        headPosX = grid.getWidth() / 2;
+        headPosY = grid.getHeight() / 2;
 
         for (int i = 1; i < 4; i++) {
             bodyArrayX.add(headPosX);
@@ -28,7 +29,11 @@ public class Snake {
         }
     }
 
-    public void move(directions heading) {
+    public int getApplesEaten() {
+        return applesEaten;
+    }
+
+    public void move(directions heading, Grid grid) {
         if (heading == null) heading = facing;
         else facing = heading;
 
@@ -37,22 +42,22 @@ public class Snake {
 
         switch (heading) {
             case UP:
-                if (headPosY - 1 < 0) ProcessingOut.tempGameOver();
+                if (headPosY - 1 < 0) Processing.tempGameOver();
                 headNewX = headPosX;
                 headNewY = headPosY - 1;
                 break;
             case DOWN:
-                if (headPosY + 1 >= Grid.getHeight()) ProcessingOut.tempGameOver();
+                if (headPosY + 1 >= grid.getHeight()) Processing.tempGameOver();
                 headNewX = headPosX;
                 headNewY = headPosY + 1;
                 break;
             case LEFT:
-                if (headPosX - 1 < 0) ProcessingOut.tempGameOver();
+                if (headPosX - 1 < 0) Processing.tempGameOver();
                 headNewX = headPosX - 1;
                 headNewY = headPosY;
                 break;
             case RIGHT:
-                if (headPosX + 1 >= Grid.getWidth()) ProcessingOut.tempGameOver();
+                if (headPosX + 1 >= grid.getWidth()) Processing.tempGameOver();
                 headNewX = headPosX + 1;
                 headNewY = headPosY;
                 break;
@@ -63,13 +68,12 @@ public class Snake {
                 headNewY = 0;
         }
 
-        switch (Grid.grid[headNewX][headNewY].getContent()) {
+        switch (grid.grid[headNewX][headNewY].getContent()) {
             case BODY:
-                ProcessingOut.tempGameOver();
+                Processing.tempGameOver();
                 break;
             case EMPTY:
                 for (int i = bodyArrayX.size() - 1; i > 0; i--) {
-                    System.out.println(i);
                     bodyArrayX.set(i, bodyArrayX.get(i - 1));
                     bodyArrayY.set(i, bodyArrayY.get(i - 1));
                 }
@@ -93,12 +97,11 @@ public class Snake {
                 headPosX = headNewX;
                 headPosY = headNewY;
 
-                Grid.placeApple();
+                applesEaten++;
+                grid.placeApple();
                 break;
             default:
                 System.out.println("how did we get here?");
         }
-        System.out.println(bodyArrayX.toString());
-        System.out.println(bodyArrayY.toString());
     }
 }
