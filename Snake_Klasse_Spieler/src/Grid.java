@@ -3,38 +3,47 @@ import java.util.Random;
 public class Grid {
     static Random r = new Random();
 
-    private static int width = 20;
-    private static int height = 20;
+    private static final int WIDTH = 20;
+    private static final int HEIGHT = 20;
 
     private static int appleX;
     private static int appleY;
 
-    public static Cell[][] grid = new Cell[width][height];
+    public static Cell[][] grid = new Cell[WIDTH][HEIGHT];
+
+    static void initGrid() {
+        for (int i = 0; i < HEIGHT; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                grid[j][i] = new Cell(Cell.states.EMPTY);
+            }
+        }
+    }
 
     public static int getWidth() {
-        return width;
+        return WIDTH;
     }
 
     public static int getHeight() {
-        return height;
+        return HEIGHT;
     }
 
     public static void placeApple() {
         while (true) {
-            int tempX = r.nextInt(width);
-            int tempY = r.nextInt(height);
+            int tempX = r.nextInt(WIDTH);
+            int tempY = r.nextInt(HEIGHT);
 
             if (grid[tempX][tempY].isEmpty()) {
                 appleX = tempX;
                 appleY = tempY;
+                updateGrid();
                 break;
             }
         }
     }
 
     public static void updateGrid() {
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
+        for (int i = 0; i < HEIGHT; i++) {
+            for (int j = 0; j < WIDTH; j++) {
                 grid[j][i].setContent(Cell.states.EMPTY);
             }
         }

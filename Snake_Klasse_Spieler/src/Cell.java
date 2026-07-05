@@ -1,6 +1,10 @@
 public class Cell {
-    public enum states{EMPTY, HEAD, BODY, APPLE};
-    private states content = states.EMPTY;
+    public enum states{EMPTY, HEAD, BODY, APPLE}
+    private states content;
+
+    public Cell(states content) {
+        this.content = content;
+    }
 
     public boolean isEmpty(){
         return content == states.EMPTY;

@@ -7,9 +7,9 @@ public class Snake {
     public static ArrayList<Integer> bodyArrayX = new ArrayList<>();
     public static ArrayList<Integer> bodyArrayY = new ArrayList<>();
 
-    private enum directions {UP, DOWN, LEFT, RIGHT}
+    public enum directions {UP, DOWN, LEFT, RIGHT}
 
-    ;
+
     private directions facing;
 
     Snake() {
@@ -27,6 +27,9 @@ public class Snake {
     }
 
     public void move(directions heading) throws Exception {
+        if (heading == null) heading = facing;
+        else facing = heading;
+
         int headNewX;
         int headNewY;
 
@@ -47,7 +50,7 @@ public class Snake {
                 headNewY = headPosY;
                 break;
             case RIGHT:
-                if (headPosX + 1 < Grid.getWidth()) Main.tempGameOver();
+                if (headPosX + 1 >= Grid.getWidth()) Main.tempGameOver();
                 headNewX = headPosX + 1;
                 headNewY = headPosY;
                 break;
@@ -60,8 +63,9 @@ public class Snake {
                 Main.tempGameOver();
                 break;
             case EMPTY:
-                for (int i = bodyArrayX.size() - 1; i > 1; i--) {
-                    bodyArrayY.set(i, bodyArrayX.get(i - 1));
+                for (int i = bodyArrayX.size() - 1; i > 0; i--) {
+                    System.out.println(i);
+                    bodyArrayX.set(i, bodyArrayX.get(i - 1));
                     bodyArrayY.set(i, bodyArrayY.get(i - 1));
                 }
                 bodyArrayX.set(0, headPosX);
@@ -74,7 +78,7 @@ public class Snake {
                 bodyArrayX.add(bodyArrayX.get(bodyArrayX.size() - 1));
                 bodyArrayY.add(bodyArrayY.get(bodyArrayY.size() - 1));
 
-                for (int i = bodyArrayX.size() - 2; i > 1; i--) {
+                for (int i = bodyArrayX.size() - 2; i > 0; i--) {
                     bodyArrayX.set(i, bodyArrayX.get(i - 1));
                     bodyArrayY.set(i, bodyArrayY.get(i - 1));
                 }
@@ -83,9 +87,13 @@ public class Snake {
 
                 headPosX = headNewX;
                 headPosY = headNewY;
+
+                Grid.placeApple();
                 break;
             default:
                 System.out.println("how did we get here?");
         }
+        System.out.println(bodyArrayX.toString());
+        System.out.println(bodyArrayY.toString());
     }
 }
