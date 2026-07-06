@@ -97,6 +97,8 @@ public class Snake {
                 headPosX = headNewX;
                 headPosY = headNewY;
 
+                grid.updateGrid(this);
+
                 applesEaten++;
                 grid.placeApple();
                 break;
