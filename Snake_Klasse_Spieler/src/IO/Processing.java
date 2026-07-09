@@ -7,6 +7,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Processing extends PApplet {
+    private enum states {ENTRYGAME, GAME, GAMEOVER, MAINMENU}
+
     Snake.directions heading;
     Grid grid = new Grid(20, 20);
     Snake snake = new Snake(grid);
