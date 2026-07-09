@@ -7,12 +7,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Processing extends PApplet {
-    private static enum modes {ENTRYGAME, GAME, GAMEOVER, MAINMENU}
-    private static modes mode;
+    enum modes {ENTRYGAME, GAME, ENTRYGAMEOVER, GAMEOVER, MAINMENU}
+    static modes mode;
 
     Snake.directions heading;
     Grid grid;
     Snake snake;
+
+    Timer timer;
+    TimerTask timerTask;
+
+    Button buttonPlayAgain;
 
 
     public static void main(String[] args) {
@@ -21,7 +26,7 @@ public class Processing extends PApplet {
 
     @Override
     public void settings() {
-        size(840, 800);
+        size(800, 840);
     }
 
     @Override
@@ -35,11 +40,12 @@ public class Processing extends PApplet {
 
         switch (mode) {
             case ENTRYGAME:
+                initializeButtons();
                 grid = new Grid(20, 20);
                 snake = new Snake(grid);
 
-                Timer timer = new Timer();
-                TimerTask timerTask = new TimerTask() {
+                timer = new Timer();
+                timerTask = new TimerTask() {
                     @Override
                     public void run() {
                         snake.move(heading, grid);
@@ -51,6 +57,7 @@ public class Processing extends PApplet {
 
                 grid.updateGrid(snake);
                 grid.placeApple();
+                grid.updateGrid(snake);
 
                 noStroke();
 
@@ -59,6 +66,7 @@ public class Processing extends PApplet {
             case GAME:
                 textSize(30);
                 fill(255);
+                textAlign(LEFT, BASELINE);
                 text("apples eaten: " + snake.getApplesEaten(), 20, 25);
 
                 for (int i = 0; grid.getHeight() > i; i++) {
@@ -79,12 +87,16 @@ public class Processing extends PApplet {
                     }
                 }
                 break;
+            case ENTRYGAMEOVER:
+                timer.cancel();
+                mode = modes.GAMEOVER;
+                break;
             case GAMEOVER:
                 textSize(100);
                 fill(255,0,0);
-                rectMode(RADIUS);
+                textAlign(CENTER, CENTER);
                 text("GAME OVER",420,400);
-                rectMode(CORNER);
+                buttonPlayAgain.execute(this);
                 break;
             case MAINMENU:
         }
@@ -101,6 +113,13 @@ public class Processing extends PApplet {
 
     public static void gameOver() {
         //System.exit(0);
-        mode = modes.GAMEOVER;
+        mode = modes.ENTRYGAMEOVER;
+    }
+
+    private void initializeButtons() {
+                buttonPlayAgain = new Button(350, 575, 100, 50, "Play Again"){
+                    @Override
+                    void executeFunction() {Processing.mode = modes.ENTRYGAME;}
+                };
     }
 }
