@@ -42,22 +42,22 @@ public class Snake {
 
         switch (heading) {
             case UP:
-                if (headPosY - 1 < 0) Processing.tempGameOver();
+                if (headPosY - 1 < 0) Processing.gameOver();
                 headNewX = headPosX;
                 headNewY = headPosY - 1;
                 break;
             case DOWN:
-                if (headPosY + 1 >= grid.getHeight()) Processing.tempGameOver();
+                if (headPosY + 1 >= grid.getHeight()) Processing.gameOver();
                 headNewX = headPosX;
                 headNewY = headPosY + 1;
                 break;
             case LEFT:
-                if (headPosX - 1 < 0) Processing.tempGameOver();
+                if (headPosX - 1 < 0) Processing.gameOver();
                 headNewX = headPosX - 1;
                 headNewY = headPosY;
                 break;
             case RIGHT:
-                if (headPosX + 1 >= grid.getWidth()) Processing.tempGameOver();
+                if (headPosX + 1 >= grid.getWidth()) Processing.gameOver();
                 headNewX = headPosX + 1;
                 headNewY = headPosY;
                 break;
@@ -70,7 +70,7 @@ public class Snake {
 
         switch (grid.grid[headNewX][headNewY].getContent()) {
             case BODY:
-                Processing.tempGameOver();
+                Processing.gameOver();
                 break;
             case EMPTY:
                 for (int i = bodyArrayX.size() - 1; i > 0; i--) {
