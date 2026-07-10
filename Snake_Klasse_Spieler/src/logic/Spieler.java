@@ -81,11 +81,28 @@ public class Spieler {
         return leaderboard;
     }
 
+public int getRang(DatabaseInterface dbi, int spielId, String name) throws SQLException {
 
-    public String getRang(DatabaseInterface dbi,int spielId, String name, int amount){
+    String query =
+            "SELECT COUNT(*) + 1 AS rang " +
+            "FROM Highscore " +
+            "WHERE spielID = " + spielId +
+            " AND highscore > (" +
+            "SELECT highscore " +
+            "FROM Highscore h " +
+            "JOIN Spieler s ON h.spielerID = s.id " +
+            "WHERE h.spielID = " + spielId +
+            " AND s.name = '" + name + "')";
 
+    ResultSet rs = dbi.executeQuery(query);
 
+    if (rs.next()) {
+        return rs.getInt("rang");
     }
+
+    return -1;
+}
+    
 
     public String getPasswort() {
         return passwort;
