@@ -7,7 +7,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Processing extends PApplet {
-    enum modes {ENTRYGAME, GAME, ENTRYGAMEOVER, GAMEOVER, MAINMENU}
+    enum modes {ENTRYGAME, GAME, ENTRYGAMEOVER, GAMEOVER, MAINMENU, temp, ENTRYLEADERBOARD, LEADERBOARD}
+
     static modes mode;
 
     Snake.directions heading;
@@ -18,6 +19,10 @@ public class Processing extends PApplet {
     TimerTask timerTask;
 
     Button buttonPlayAgain;
+    Button buttonreturnMainMenu;
+    Button buttonPlayOriginal;
+    Button buttonLeaderboard;
+    Button buttonBack;
 
 
     public static void main(String[] args) {
@@ -31,7 +36,7 @@ public class Processing extends PApplet {
 
     @Override
     public void setup() {
-        mode = modes.ENTRYGAME;
+        mode = modes.temp;
     }
 
     @Override
@@ -39,8 +44,33 @@ public class Processing extends PApplet {
         background(0);
 
         switch (mode) {
-            case ENTRYGAME:
+            case temp:
                 initializeButtons();
+                mode = modes.MAINMENU;
+                break;
+            case MAINMENU:
+                textSize(150);
+                fill(0, 255, 0);
+                textAlign(CENTER, CENTER);
+                text("Snake", 400, 120);
+
+                textSize(25);
+                fill(255);
+                textAlign(LEFT, CENTER);
+                text("Snake Orginal", 150, 325);
+
+                buttonPlayOriginal.execute(this);
+                buttonLeaderboard.execute(this);
+                break;
+            case ENTRYLEADERBOARD:
+
+                mode = modes.LEADERBOARD;
+                break;
+            case LEADERBOARD:
+
+                buttonBack.execute(this);
+                break;
+            case ENTRYGAME:
                 grid = new Grid(20, 20);
                 snake = new Snake(grid);
 
@@ -93,12 +123,12 @@ public class Processing extends PApplet {
                 break;
             case GAMEOVER:
                 textSize(100);
-                fill(255,0,0);
+                fill(255, 0, 0);
                 textAlign(CENTER, CENTER);
-                text("GAME OVER",420,400);
+                text("GAME OVER", 420, 250);
                 buttonPlayAgain.execute(this);
+                buttonreturnMainMenu.execute(this);
                 break;
-            case MAINMENU:
         }
     }
 
@@ -117,9 +147,37 @@ public class Processing extends PApplet {
     }
 
     private void initializeButtons() {
-                buttonPlayAgain = new Button(350, 575, 100, 50, "Play Again"){
-                    @Override
-                    void executeFunction() {Processing.mode = modes.ENTRYGAME;}
-                };
+        buttonPlayAgain = new Button(300, 500, 200, 50, "Play Again") {
+            @Override
+            void executeFunction() {
+                Processing.mode = modes.ENTRYGAME;
+            }
+        };
+
+        buttonreturnMainMenu = new Button(300, 600, 200, 50, "Return to Menu") {
+            @Override
+            void executeFunction() {
+                Processing.mode = modes.MAINMENU;
+            }
+        };
+
+        buttonPlayOriginal = new Button(470, 300, 140, 50, "Play") {
+            @Override
+            void executeFunction() {
+                Processing.mode = modes.ENTRYGAME;
+            }
+        };
+        buttonLeaderboard = new Button(630, 300, 140, 50, "Leaderboard") {
+            @Override
+            void executeFunction() {
+                Processing.mode = modes.ENTRYLEADERBOARD;
+            }
+        };
+        buttonBack = new Button(50, 50, 70, 50, "Back") {
+            @Override
+            void executeFunction() {
+                Processing.mode = modes.MAINMENU;
+            }
+        };
     }
 }
