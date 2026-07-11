@@ -35,8 +35,10 @@ CREATE INDEX idx_highscore_spiel ON Highscore(spielID);
 /*TESTDATEN highscore*/
 INSERT INTO SnakeSpiel (name, schwierigkeit, spieleNr) VALUES
 ('Snake - das Original', 2, 1),
+('Snake II', 2, 2),
 ('TG-Snake', 4, 3),
 ('Snake Extreme', 5, 4),
+('Classic Snake', 1, 5),
 ('Speed Snake', 3, 6);
 
 INSERT INTO Spieler (name, passwort, spielerNr) VALUES
