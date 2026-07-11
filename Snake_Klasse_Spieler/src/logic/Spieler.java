@@ -1,13 +1,9 @@
 package logic;
 
 import IO.DatabaseInterface;
-
-import java.awt.*;
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+
 
 
 public class Spieler {
@@ -18,8 +14,7 @@ public class Spieler {
     private String passwort;
     private int highscore;
 
-
-    Spieler(int spielernr, String passwort, String name, int id, int highscore) {
+public   Spieler(int spielernr, String passwort, String name, int id, int highscore) {
         this.spielernr = spielernr;
         this.passwort = passwort;
         this.name = name;
@@ -28,28 +23,24 @@ public class Spieler {
     }
 
     public static boolean login(DatabaseInterface dbi, String name, String passwort) throws SQLException {
-        String query = "SELECT passwort FROM spieler WHERE name = " + name;
+        String query = "SELECT passwort FROM spieler WHERE name = '" + name + "'";
         ResultSet rs = dbi.executeQuery(query);
 
-        if (rs.next()) { // Benutzer gefunden
+        if (rs!= null && rs.next()) { // Benutzer gefunden
             String gespeichertesPasswort = rs.getString("passwort");
             return gespeichertesPasswort.equals(passwort);
         }
-        else {
         return false; // Benutzer nicht gefunden oder Fehler
     }
 
 
-    }
-
-    public int getHighscore(DatabaseInterface dbi,int spielID, int spielerID) throws SQLException {
-        String query = "SELECT highscore FROM score WHERE spielID = "
-                + spielID + " AND spielerID = " + spielerID;
+    public static int getHighscore(DatabaseInterface dbi,int spielID, int spielerID) throws SQLException {
+        String query = "SELECT highscore FROM Highscore WHERE spielID = " + spielID + " AND spielerID = " + spielerID;
 
         ResultSet rs = dbi.executeQuery(query);
 
         try {
-            if (rs.next()) {
+            if (rs != null && rs.next()) {
                 return rs.getInt("highscore");
             } else {
                 return -1;
@@ -81,7 +72,7 @@ public class Spieler {
         return leaderboard;
     }
 
-public int getRang(DatabaseInterface dbi, int spielId, String name) throws SQLException {
+public static int getRang(DatabaseInterface dbi, int spielId, String name) throws SQLException {
 
     String query =
             "SELECT COUNT(*) + 1 AS rang " +

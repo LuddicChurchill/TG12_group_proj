@@ -24,14 +24,17 @@ public class DatabaseInterface {
         }
     }
 
-    public ResultSet executeQuery(String query){
+    public ResultSet executeQuery(String query) throws SQLException{
+        if (connection == null){
+            System.out.println("Keine Verbindung");
+        }
         try{
             Statement stm = connection.createStatement();
             return stm.executeQuery(query);
         } catch (SQLException e){
             System.out.println(e.getMessage());
+            throw e;
         }
-        return null;
     }
 
     public void closeConnection(){
