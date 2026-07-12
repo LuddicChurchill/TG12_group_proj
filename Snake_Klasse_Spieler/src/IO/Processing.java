@@ -83,7 +83,7 @@ public class Processing extends PApplet {
                         grid.updateGrid(snake);
                     }
                 };
-                timer.schedule(timerTask, 100, 100);
+                timer.schedule(timerTask, 1000, 1000);
 
                 grid.updateGrid(snake);
                 grid.placeApple();

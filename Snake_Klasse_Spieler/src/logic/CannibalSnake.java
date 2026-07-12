@@ -2,37 +2,12 @@ package logic;
 
 import IO.Processing;
 
-import java.util.ArrayList;
-
-public class Snake {
-    public int headPosX;
-    public int headPosY;
-
-    protected int applesEaten = 0;
-
-    protected ArrayList<Integer> bodyArrayX = new ArrayList<>();
-    protected ArrayList<Integer> bodyArrayY = new ArrayList<>();
-
-    public enum directions {UP, DOWN, LEFT, RIGHT}
-    protected directions facing;
-
-
-    public Snake(Grid grid) {
-        facing = directions.UP;
-
-        headPosX = grid.getWidth() / 2;
-        headPosY = grid.getHeight() / 2;
-
-        for (int i = 1; i < 4; i++) {
-            bodyArrayX.add(headPosX);
-            bodyArrayY.add(headPosY + i);
-        }
+public class CannibalSnake extends Snake {
+    public CannibalSnake(Grid grid) {
+        super(grid);
     }
 
-    public int getApplesEaten() {
-        return applesEaten;
-    }
-
+    @Override
     public void move(directions heading, Grid grid) {
         if (heading == null) heading = facing;
         //else facing = heading;
@@ -103,10 +78,19 @@ public class Snake {
 
         switch (grid.grid[headNewX][headNewY].getContent()) {
             case BODY:
-                if (!(headNewX == bodyArrayX.get(bodyArrayX.size() - 1) && headNewY == bodyArrayY.get(bodyArrayY.size() - 1))) {
-                    Processing.gameOver();
-                    break;
+                int indexToRemove = 0;
+                for (int i = 0; i < bodyArrayX.size(); i++) {
+                    if (bodyArrayX.get(i) == headNewX && bodyArrayY.get(i) == headNewY) {
+                        indexToRemove = i;
+                    }
                 }
+
+                for (int i = bodyArrayX.size() - 1; i >= indexToRemove + 1; i--) {
+                    bodyArrayX.remove(i);
+                    bodyArrayY.remove(i);
+                }
+
+                //break;
             case EMPTY:
                 for (int i = bodyArrayX.size() - 1; i > 0; i--) {
                     bodyArrayX.set(i, bodyArrayX.get(i - 1));
