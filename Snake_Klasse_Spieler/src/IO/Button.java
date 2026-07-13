@@ -5,11 +5,11 @@ import processing.core.PConstants;
 
 public class Button {
 
-    private final int X;
-    private final int Y;
+    final int X;
+    final int Y;
 
-    private final int WIDTH;
-    private final int HEIGHT;
+    final int WIDTH;
+    final int HEIGHT;
 
     private final String TEXT;
 

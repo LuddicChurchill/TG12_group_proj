@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-
 public class Spieler {
 
     private int spielernr;
@@ -14,7 +13,7 @@ public class Spieler {
     private String passwort;
     private int highscore;
 
-public   Spieler(int spielernr, String passwort, String name, int id, int highscore) {
+    public Spieler(int spielernr, String passwort, String name, int id, int highscore) {
         this.spielernr = spielernr;
         this.passwort = passwort;
         this.name = name;
@@ -26,7 +25,7 @@ public   Spieler(int spielernr, String passwort, String name, int id, int highsc
         String query = "SELECT passwort FROM spieler WHERE name = '" + name + "'";
         ResultSet rs = dbi.executeQuery(query);
 
-        if (rs!= null && rs.next()) { // Benutzer gefunden
+        if (rs != null && rs.next()) { // Benutzer gefunden
             String gespeichertesPasswort = rs.getString("passwort");
             return gespeichertesPasswort.equals(passwort);
         }
@@ -34,7 +33,7 @@ public   Spieler(int spielernr, String passwort, String name, int id, int highsc
     }
 
 
-    public static int getHighscore(DatabaseInterface dbi,int spielID, int spielerID) throws SQLException {
+    public static int getHighscore(DatabaseInterface dbi, int spielID, int spielerID) throws SQLException {
         String query = "SELECT highscore FROM Highscore WHERE spielID = " + spielID + " AND spielerID = " + spielerID;
 
         ResultSet rs = dbi.executeQuery(query);
@@ -51,7 +50,7 @@ public   Spieler(int spielernr, String passwort, String name, int id, int highsc
     }
 
     public static Spieler[] getLeaderboard(DatabaseInterface dbi, int spielId, int amount) throws SQLException {
-        Spieler[] leaderboard  = new Spieler[amount];
+        Spieler[] leaderboard = new Spieler[amount];
         String query = "SELECT s.id, s.name, s.passwort, s.spielerNr, h.highscore " + "FROM Highscore h " + "JOIN Spieler s ON h.spielerID = s.id " + "WHERE h.spielID = " + spielId + " ORDER BY h.highscore DESC " + " LIMIT " + amount;
 
         ResultSet rs = dbi.executeQuery(query);
@@ -72,28 +71,28 @@ public   Spieler(int spielernr, String passwort, String name, int id, int highsc
         return leaderboard;
     }
 
-public static int getRang(DatabaseInterface dbi, int spielId, String name) throws SQLException {
+    public static int getRang(DatabaseInterface dbi, int spielId, String name) throws SQLException {
 
-    String query =
-            "SELECT COUNT(*) + 1 AS rang " +
-            "FROM Highscore " +
-            "WHERE spielID = " + spielId +
-            " AND highscore > (" +
-            "SELECT highscore " +
-            "FROM Highscore h " +
-            "JOIN Spieler s ON h.spielerID = s.id " +
-            "WHERE h.spielID = " + spielId +
-            " AND s.name = '" + name + "')";
+        String query =
+                "SELECT COUNT(*) + 1 AS rang " +
+                        "FROM Highscore " +
+                        "WHERE spielID = " + spielId +
+                        " AND highscore > (" +
+                        "SELECT highscore " +
+                        "FROM Highscore h " +
+                        "JOIN Spieler s ON h.spielerID = s.id " +
+                        "WHERE h.spielID = " + spielId +
+                        " AND s.name = '" + name + "')";
 
-    ResultSet rs = dbi.executeQuery(query);
+        ResultSet rs = dbi.executeQuery(query);
 
-    if (rs.next()) {
-        return rs.getInt("rang");
+        if (rs.next()) {
+            return rs.getInt("rang");
+        }
+
+        return -1;
     }
 
-    return -1;
-}
-    
 
     public String getPasswort() {
         return passwort;
@@ -127,6 +126,7 @@ public static int getRang(DatabaseInterface dbi, int spielId, String name) throw
     public void setSpielernr(int spielernr) {
         this.spielernr = spielernr;
     }
+
     public int getHighscore() {
         return highscore;
     }

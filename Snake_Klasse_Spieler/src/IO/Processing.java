@@ -7,7 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Processing extends PApplet {
-    enum modes {ENTRYGAME, GAME, ENTRYGAMEOVER, GAMEOVER, MAINMENU, temp, ENTRYLEADERBOARD, LEADERBOARD}
+    enum modes {ENTRYGAME, GAME, ENTRYGAMEOVER, GAMEOVER, MAINMENU, temp, ENTRYLEADERBOARD, LEADERBOARD, LOGIN}
 
     static modes mode;
 
@@ -23,6 +23,8 @@ public class Processing extends PApplet {
     Button buttonPlayOriginal;
     Button buttonLeaderboard;
     Button buttonBack;
+
+    Textfield test;
 
 
     public static void main(String[] args) {
@@ -46,7 +48,10 @@ public class Processing extends PApplet {
         switch (mode) {
             case temp:
                 initializeButtons();
-                mode = modes.MAINMENU;
+                mode = modes.LOGIN;
+                break;
+            case LOGIN:
+                test.execute(this);
                 break;
             case MAINMENU:
                 textSize(150);
@@ -83,7 +88,7 @@ public class Processing extends PApplet {
                         grid.updateGrid(snake);
                     }
                 };
-                timer.schedule(timerTask, 1000, 1000);
+                timer.schedule(timerTask, 100, 100);
 
                 grid.updateGrid(snake);
                 grid.placeApple();
@@ -134,10 +139,33 @@ public class Processing extends PApplet {
 
     @Override
     public void keyPressed() {
-        if (key == 'w') heading = Snake.directions.UP;
-        if (key == 'a') heading = Snake.directions.LEFT;
-        if (key == 's') heading = Snake.directions.DOWN;
-        if (key == 'd') heading = Snake.directions.RIGHT;
+        switch (mode) {
+            case LOGIN:
+                try {
+                    if (key == ENTER || key == RETURN) Textfield.active.selectNext();
+                    if (key == BACKSPACE) Textfield.active.writtenInput.remove(Textfield.active.writtenInput.size() - 1);
+                } catch (NullPointerException e) {
+                    System.out.println("no Textfield selected");
+                }
+                break;
+            case GAME:
+                if (key == 'w') heading = Snake.directions.UP;
+                if (key == 'a') heading = Snake.directions.LEFT;
+                if (key == 's') heading = Snake.directions.DOWN;
+                if (key == 'd') heading = Snake.directions.RIGHT;
+
+        }
+    }
+
+    @Override
+    public void keyTyped() {
+        try {
+            if (mode == modes.LOGIN && key != BACKSPACE && key != ENTER) {
+                Textfield.active.writtenInput.add(key);
+            }
+        } catch (NullPointerException e) {
+            System.out.println("no Textfield selected");
+        }
     }
 
 
@@ -179,5 +207,7 @@ public class Processing extends PApplet {
                 Processing.mode = modes.MAINMENU;
             }
         };
+
+        test = new Textfield(350, 400, 100, 30);
     }
 }
