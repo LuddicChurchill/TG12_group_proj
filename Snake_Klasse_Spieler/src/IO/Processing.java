@@ -8,12 +8,12 @@ import java.util.TimerTask;
 
 public class Processing extends PApplet {
     enum modes {ENTRYGAME, GAME, ENTRYGAMEOVER, GAMEOVER, MAINMENU, temp, ENTRYLEADERBOARD, LEADERBOARD, LOGIN}
-
     static modes mode;
 
     enum games {ORIGINAL, CANNIBAL}
-
     static games currentGame;
+
+    static boolean loginFailed = false;
 
     Snake.directions heading;
     Grid grid;
@@ -21,12 +21,11 @@ public class Processing extends PApplet {
     DatabaseInterface dbi = new DatabaseInterface("localhost:3306", "root", "");
     Spieler player;
 
-
     Timer timer;
     TimerTask timerTask;
 
     Button buttonPlayAgain;
-    Button buttonreturnMainMenu;
+    Button buttonReturnMainMenu;
     Button buttonPlayOriginal;
     Button buttonPlayCannibal;
     Button buttonLeaderboardOriginal;
@@ -59,7 +58,7 @@ public class Processing extends PApplet {
             case temp:
                 dbi.establishConnection();
                 initializeButtons();
-                mode = modes.MAINMENU;
+                mode = modes.LOGIN;
                 break;
             case LOGIN:
                 textSize(100);
@@ -72,6 +71,12 @@ public class Processing extends PApplet {
                 textAlign(LEFT, CENTER);
                 text("Username:", 200, 415);
                 text("Password:", 200, 465);
+
+                if (loginFailed) {
+                    fill(255, 0, 0);
+                    textAlign(CENTER, CENTER);
+                    text("Wrong username or password, please try again", 400 , 370 );
+                }
 
                 textfieldUsername.execute(this);
                 textfieldPassword.execute(this);
@@ -164,7 +169,7 @@ public class Processing extends PApplet {
                 textAlign(CENTER, CENTER);
                 text("GAME OVER", 420, 250);
                 buttonPlayAgain.execute(this);
-                buttonreturnMainMenu.execute(this);
+                buttonReturnMainMenu.execute(this);
                 break;
         }
     }
@@ -215,7 +220,7 @@ public class Processing extends PApplet {
             }
         };
 
-        buttonreturnMainMenu = new Button(300, 600, 200, 50, "Return to Menu") {
+        buttonReturnMainMenu = new Button(300, 600, 200, 50, "Return to Menu") {
             @Override
             void executeFunction() {
                 Processing.mode = modes.MAINMENU;
@@ -274,10 +279,12 @@ public class Processing extends PApplet {
             void selectNext() {
                 try {
                     if (Spieler.login(dbi, textfieldUsername.writtenInputToString(), textfieldPassword.writtenInputToString())) {
-
+                        player = new Spieler(dbi, textfieldUsername.writtenInputToString());
+                    } else {
+                        Processing.loginFailed = true;
                     }
                 } catch (java.sql.SQLException e) {
-
+                    System.out.println("how?");
                 }
             }
         };
