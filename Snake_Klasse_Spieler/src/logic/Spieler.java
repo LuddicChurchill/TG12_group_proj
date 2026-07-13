@@ -21,9 +21,19 @@ public class Spieler {
         this.highscore = highscore;
     }
 
-    public Spieler(DatabaseInterface dbi, String name) {
-        //TODO: schreibe einen Constructor, der die Werte von Spieler
-        // nicht als Parameter bekommt, sondern direkt aus der Datenbank holt
+    public Spieler(DatabaseInterface dbi, String name)  throws SQLException {
+        String query = "SELECT id, name, passwort, spielerNr FROM Spieler WHERE name = '" + name + "'";
+        ResultSet rs = dbi.executeQuery(query);
+
+        if (rs != null && rs.next()) {
+            this.id = rs.getInt("id");
+            this.name = rs.getString("name");
+            this.passwort = rs.getString("passwort");
+            this.spielernr = rs.getInt("spielerNr");
+            this.highscore = -1;
+        } else {
+            throw new SQLException("Spieler mit Namen '" + name + "' wurde nicht gefunden!");
+        }
     }
 
     public static boolean login(DatabaseInterface dbi, String name, String passwort) throws SQLException {
@@ -37,11 +47,18 @@ public class Spieler {
         return false; // Benutzer nicht gefunden oder Fehler
     }
 
-    public void updateHighscore(int score, int spielID) {
-        // TODO: schreibe eine Funktion, die den übergebnen Parameter score mit dem
-        // aktuell in der Datenbank gespeicherten Highscore vergleicht.
-        // Wenn der neue Score höher ist, muss die Database mit dem neuen Highscore
-        // upgedatet werden
+    public void updateHighscore(DatabaseInterface dbi, int score, int spielID) throws SQLException {
+            int aktuellerHighscore = getHighscore(dbi, spielID, this.id);
+
+            if (score > aktuellerHighscore) {
+                String query = "UPDATE Highscore SET highscore = " + score +
+                        " WHERE spielerID = " + this.id +
+                        " AND spielID = " + spielID;
+                dbi.executeUpdate(query);
+                System.out.println("Highscore aktualisiert auf: " + score);
+            } else {
+                System.out.println("Score " + score + " ist nicht höher als " + aktuellerHighscore + ". Kein Update nötig.");
+            }
     }
 
     public static int getHighscore(DatabaseInterface dbi, int spielID, int spielerID) throws SQLException {

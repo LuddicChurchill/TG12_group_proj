@@ -37,6 +37,20 @@ public class DatabaseInterface {
         }
     }
 
+    public void executeUpdate(String query) throws SQLException {
+        if (connection == null) {
+            throw new SQLException("Keine Verbindung zur Datenbank!");
+        }
+        try {
+            Statement stm = connection.createStatement();
+            stm.executeUpdate(query);
+            System.out.println("UPDATE erfolgreich ausgeführt");
+        } catch (SQLException e) {
+            System.out.println("Fehler beim UPDATE: " + e.getMessage());
+            throw e;
+        }
+    }
+
     public void closeConnection(){
         try{
             connection.close();
