@@ -11,6 +11,10 @@ public class Processing extends PApplet {
 
     static modes mode;
 
+    enum games {ORIGINAL, CANNIBAL}
+
+    static games currentGame;
+
     Snake.directions heading;
     Grid grid;
     Snake snake;
@@ -24,7 +28,9 @@ public class Processing extends PApplet {
     Button buttonPlayAgain;
     Button buttonreturnMainMenu;
     Button buttonPlayOriginal;
-    Button buttonLeaderboard;
+    Button buttonPlayCannibal;
+    Button buttonLeaderboardOriginal;
+    Button buttonLeaderboardCannibal;
     Button buttonBack;
 
     Textfield textfieldUsername;
@@ -53,10 +59,22 @@ public class Processing extends PApplet {
             case temp:
                 dbi.establishConnection();
                 initializeButtons();
-                mode = modes.LOGIN;
+                mode = modes.MAINMENU;
                 break;
             case LOGIN:
+                textSize(100);
+                fill(0, 255, 0);
+                textAlign(CENTER, CENTER);
+                text("Welcome to Snake", 400, 250);
+
+                textSize(20);
+                fill(255);
+                textAlign(LEFT, CENTER);
+                text("Username:", 200, 415);
+                text("Password:", 200, 465);
+
                 textfieldUsername.execute(this);
+                textfieldPassword.execute(this);
                 break;
             case MAINMENU:
                 textSize(150);
@@ -68,12 +86,15 @@ public class Processing extends PApplet {
                 fill(255);
                 textAlign(LEFT, CENTER);
                 text("Snake Orginal", 150, 325);
+                text("Cannibal Snake", 150, 425);
 
                 buttonPlayOriginal.execute(this);
-                buttonLeaderboard.execute(this);
+                buttonLeaderboardOriginal.execute(this);
+                buttonPlayCannibal.execute(this);
+                buttonLeaderboardCannibal.execute(this);
                 break;
             case ENTRYLEADERBOARD:
-
+                System.out.println(currentGame);
                 mode = modes.LEADERBOARD;
                 break;
             case LEADERBOARD:
@@ -82,7 +103,13 @@ public class Processing extends PApplet {
                 break;
             case ENTRYGAME:
                 grid = new Grid(20, 20);
-                snake = new Snake(grid);
+                switch (currentGame) {
+                    case ORIGINAL:
+                        snake = new Snake(grid);
+                        break;
+                    case CANNIBAL:
+                        snake = new CannibalSnake(grid);
+                }
 
                 timer = new Timer();
                 timerTask = new TimerTask() {
@@ -93,7 +120,7 @@ public class Processing extends PApplet {
                         grid.updateGrid(snake);
                     }
                 };
-                timer.schedule(timerTask, 100, 100);
+                timer.schedule(timerTask, 500, 500);
 
                 grid.updateGrid(snake);
                 grid.placeApple();
@@ -148,7 +175,7 @@ public class Processing extends PApplet {
             case LOGIN:
                 try {
                     if (key == ENTER || key == RETURN) Textfield.active.selectNext();
-                    if (key == BACKSPACE)
+                    if (key == BACKSPACE && !Textfield.active.writtenInput.isEmpty())
                         Textfield.active.writtenInput.remove(Textfield.active.writtenInput.size() - 1);
                 } catch (NullPointerException e) {
                     System.out.println("no Textfield selected");
@@ -198,18 +225,39 @@ public class Processing extends PApplet {
         buttonPlayOriginal = new Button(470, 300, 140, 50, "Play") {
             @Override
             void executeFunction() {
+                currentGame = games.ORIGINAL;
                 Processing.mode = modes.ENTRYGAME;
             }
         };
-        buttonLeaderboard = new Button(630, 300, 140, 50, "Leaderboard") {
+
+        buttonPlayCannibal = new Button(470, 400, 140, 50, "Play") {
             @Override
             void executeFunction() {
+                currentGame = games.CANNIBAL;
+                Processing.mode = modes.ENTRYGAME;
+            }
+        };
+
+        buttonLeaderboardOriginal = new Button(630, 300, 140, 50, "Leaderboard") {
+            @Override
+            void executeFunction() {
+                currentGame = games.ORIGINAL;
                 Processing.mode = modes.ENTRYLEADERBOARD;
             }
         };
+
+        buttonLeaderboardCannibal = new Button(630, 400, 140, 50, "Leaderboard") {
+            @Override
+            void executeFunction() {
+                currentGame = games.CANNIBAL;
+                Processing.mode = modes.ENTRYLEADERBOARD;
+            }
+        };
+
         buttonBack = new Button(50, 50, 70, 50, "Back") {
             @Override
             void executeFunction() {
+                currentGame = null;
                 Processing.mode = modes.MAINMENU;
             }
         };
@@ -225,7 +273,7 @@ public class Processing extends PApplet {
             @Override
             void selectNext() {
                 try {
-                    if(Spieler.login(dbi, textfieldUsername.writtenInputToString(), textfieldPassword.writtenInputToString())){
+                    if (Spieler.login(dbi, textfieldUsername.writtenInputToString(), textfieldPassword.writtenInputToString())) {
 
                     }
                 } catch (java.sql.SQLException e) {

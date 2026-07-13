@@ -31,7 +31,7 @@ public class Textfield extends Button{
         app.fill(0);
         app.textSize(20);
         app.textAlign(PConstants.LEFT, PConstants.CENTER);
-        app.text(writtenInputToString(), X, Y +  (HEIGHT/2));
+        app.text(writtenInputToString(), X + 3, Y +  (HEIGHT/2));
     }
 
     void selectNext() {}
