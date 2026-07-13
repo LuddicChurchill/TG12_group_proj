@@ -21,6 +21,11 @@ public class Spieler {
         this.highscore = highscore;
     }
 
+    public Spieler(DatabaseInterface dbi, String name) {
+        //TODO: schreibe einen Constructor, der die Werte von Spieler
+        // nicht als Parameter bekommt, sondern direkt aus der Datenbank holt
+    }
+
     public static boolean login(DatabaseInterface dbi, String name, String passwort) throws SQLException {
         String query = "SELECT passwort FROM spieler WHERE name = '" + name + "'";
         ResultSet rs = dbi.executeQuery(query);
@@ -32,6 +37,12 @@ public class Spieler {
         return false; // Benutzer nicht gefunden oder Fehler
     }
 
+    public void updateHighscore(int score, int spielID) {
+        // TODO: schreibe eine Funktion, die den übergebnen Parameter score mit dem
+        // aktuell in der Datenbank gespeicherten Highscore vergleicht.
+        // Wenn der neue Score höher ist, muss die Database mit dem neuen Highscore
+        // upgedatet werden
+    }
 
     public static int getHighscore(DatabaseInterface dbi, int spielID, int spielerID) throws SQLException {
         String query = "SELECT highscore FROM Highscore WHERE spielID = " + spielID + " AND spielerID = " + spielerID;
@@ -91,47 +102,5 @@ public class Spieler {
         }
 
         return -1;
-    }
-
-
-    public String getPasswort() {
-        return passwort;
-    }
-
-    public void setPasswort(String passwort) {
-        this.passwort = passwort;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-    public int getSpielernr() {
-        return spielernr;
-    }
-
-    public void setSpielernr(int spielernr) {
-        this.spielernr = spielernr;
-    }
-
-    public int getHighscore() {
-        return highscore;
-    }
-
-    public void setHighscore(int highscore) {
-        this.highscore = highscore;
     }
 }
