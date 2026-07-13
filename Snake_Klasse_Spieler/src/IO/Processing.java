@@ -7,9 +7,22 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Processing extends PApplet {
+    enum modes {ENTRYGAME, GAME, ENTRYGAMEOVER, GAMEOVER, MAINMENU, temp, ENTRYLEADERBOARD, LEADERBOARD}
+
+    static modes mode;
+
     Snake.directions heading;
-    Grid grid = new Grid(20, 20);
-    Snake snake = new Snake(grid);
+    Grid grid;
+    Snake snake;
+
+    Timer timer;
+    TimerTask timerTask;
+
+    Button buttonPlayAgain;
+    Button buttonreturnMainMenu;
+    Button buttonPlayOriginal;
+    Button buttonLeaderboard;
+    Button buttonBack;
 
 
     public static void main(String[] args) {
@@ -18,51 +31,104 @@ public class Processing extends PApplet {
 
     @Override
     public void settings() {
-        size(840, 800);
+        size(800, 840);
     }
 
     @Override
     public void setup() {
-        Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                snake.move(heading, grid);
-                heading = null;
-                grid.updateGrid(snake);
-            }
-        };
-        timer.schedule(timerTask, 100, 100);
-
-        grid.placeApple();
-
-        noStroke();
-        textSize(30);
+        mode = modes.temp;
     }
 
     @Override
     public void draw() {
         background(0);
 
-        fill(255);
-        text("apples eaten: " + snake.getApplesEaten(), 20, 25);
+        switch (mode) {
+            case temp:
+                initializeButtons();
+                mode = modes.MAINMENU;
+                break;
+            case MAINMENU:
+                textSize(150);
+                fill(0, 255, 0);
+                textAlign(CENTER, CENTER);
+                text("Snake", 400, 120);
 
-        for (int i = 0; grid.getHeight() > i; i++) {
-            for (int j = 0; grid.getWidth() > j; j++) {
-                switch (grid.grid[j][i].getContent()) {
-                    case HEAD:
-                        fill(38, 168, 5);
-                        square(j * 40, i * 40 + 40, 40);
-                        break;
-                    case BODY:
-                        fill(19, 82, 3);
-                        square(j * 40, i * 40 + 40, 40);
-                        break;
-                    case APPLE:
-                        fill(255, 0, 0);
-                        square(j * 40, i * 40 + 40, 40);
+                textSize(25);
+                fill(255);
+                textAlign(LEFT, CENTER);
+                text("Snake Orginal", 150, 325);
+
+                buttonPlayOriginal.execute(this);
+                buttonLeaderboard.execute(this);
+                break;
+            case ENTRYLEADERBOARD:
+
+                mode = modes.LEADERBOARD;
+                break;
+            case LEADERBOARD:
+
+                buttonBack.execute(this);
+                break;
+            case ENTRYGAME:
+                grid = new Grid(20, 20);
+                snake = new Snake(grid);
+
+                timer = new Timer();
+                timerTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        snake.move(heading, grid);
+                        heading = null;
+                        grid.updateGrid(snake);
+                    }
+                };
+                timer.schedule(timerTask, 1000, 1000);
+
+                grid.updateGrid(snake);
+                grid.placeApple();
+                grid.updateGrid(snake);
+
+                noStroke();
+
+                mode = modes.GAME;
+                break;
+            case GAME:
+                textSize(30);
+                fill(255);
+                textAlign(LEFT, BASELINE);
+                text("apples eaten: " + snake.getApplesEaten(), 20, 25);
+
+                for (int i = 0; grid.getHeight() > i; i++) {
+                    for (int j = 0; grid.getWidth() > j; j++) {
+                        switch (grid.grid[j][i].getContent()) {
+                            case HEAD:
+                                fill(38, 168, 5);
+                                square(j * 40, i * 40 + 40, 40);
+                                break;
+                            case BODY:
+                                fill(19, 82, 3);
+                                square(j * 40, i * 40 + 40, 40);
+                                break;
+                            case APPLE:
+                                fill(255, 0, 0);
+                                square(j * 40, i * 40 + 40, 40);
+                        }
+                    }
                 }
-            }
+                break;
+            case ENTRYGAMEOVER:
+                timer.cancel();
+                mode = modes.GAMEOVER;
+                break;
+            case GAMEOVER:
+                textSize(100);
+                fill(255, 0, 0);
+                textAlign(CENTER, CENTER);
+                text("GAME OVER", 420, 250);
+                buttonPlayAgain.execute(this);
+                buttonreturnMainMenu.execute(this);
+                break;
         }
     }
 
@@ -75,7 +141,43 @@ public class Processing extends PApplet {
     }
 
 
-    public static void tempGameOver() {
-        System.exit(0);
+    public static void gameOver() {
+        //System.exit(0);
+        mode = modes.ENTRYGAMEOVER;
+    }
+
+    private void initializeButtons() {
+        buttonPlayAgain = new Button(300, 500, 200, 50, "Play Again") {
+            @Override
+            void executeFunction() {
+                Processing.mode = modes.ENTRYGAME;
+            }
+        };
+
+        buttonreturnMainMenu = new Button(300, 600, 200, 50, "Return to Menu") {
+            @Override
+            void executeFunction() {
+                Processing.mode = modes.MAINMENU;
+            }
+        };
+
+        buttonPlayOriginal = new Button(470, 300, 140, 50, "Play") {
+            @Override
+            void executeFunction() {
+                Processing.mode = modes.ENTRYGAME;
+            }
+        };
+        buttonLeaderboard = new Button(630, 300, 140, 50, "Leaderboard") {
+            @Override
+            void executeFunction() {
+                Processing.mode = modes.ENTRYLEADERBOARD;
+            }
+        };
+        buttonBack = new Button(50, 50, 70, 50, "Back") {
+            @Override
+            void executeFunction() {
+                Processing.mode = modes.MAINMENU;
+            }
+        };
     }
 }
