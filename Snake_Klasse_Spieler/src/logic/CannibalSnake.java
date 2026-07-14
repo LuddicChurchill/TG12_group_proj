@@ -88,6 +88,7 @@ public class CannibalSnake extends Snake {
                 for (int i = bodyArrayX.size() - 1; i >= indexToRemove + 1; i--) {
                     bodyArrayX.remove(i);
                     bodyArrayY.remove(i);
+                    score -= 70;
                 }
 
                 //break;
@@ -118,7 +119,7 @@ public class CannibalSnake extends Snake {
 
                 grid.updateGrid(this);
 
-                applesEaten++;
+                score += 50;
                 grid.placeApple();
                 break;
             default:

@@ -3,7 +3,6 @@ package IO;
 import logic.*;
 import processing.core.PApplet;
 
-import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,6 +14,7 @@ public class Processing extends PApplet {
     static games currentGame;
 
     static boolean loginFailed = false;
+    Spieler[] leaderboardList;
 
     Snake.directions heading;
     Grid grid;
@@ -76,7 +76,7 @@ public class Processing extends PApplet {
                 if (loginFailed) {
                     fill(255, 0, 0);
                     textAlign(CENTER, CENTER);
-                    text("Wrong username or password, please try again", 400 , 370 );
+                    text("Wrong username or password, please try again", 400, 370);
                 }
 
                 textfieldUsername.execute(this);
@@ -109,6 +109,18 @@ public class Processing extends PApplet {
             case ENTRYLEADERBOARD:
                 System.out.println(currentGame);
 
+                /*try {
+                    switch (currentGame) {
+                        case ORIGINAL:
+                            leaderboardList = Spieler.getLeaderboard(dbi, 1, 5);
+                            break;
+                        case CANNIBAL:
+                            leaderboardList = Spieler.getLeaderboard(dbi, 2, 5);
+                    }
+                } catch (SQLException e) {
+                    System.out.println("not able to load leaderboard");
+                }*/
+
                 mode = modes.LEADERBOARD;
                 break;
             case LEADERBOARD:
@@ -119,10 +131,10 @@ public class Processing extends PApplet {
                 textSize(30);
                 switch (currentGame) {
                     case ORIGINAL:
-                        text("Original Snake", 400 , 200 );
-                    break;
+                        text("Original Snake", 400, 200);
+                        break;
                     case CANNIBAL:
-                        text("Snake Cannibal", 400 , 200 );
+                        text("Snake Cannibal", 400, 200);
                 }
 
                 buttonBack.execute(this);
@@ -146,7 +158,7 @@ public class Processing extends PApplet {
                         grid.updateGrid(snake);
                     }
                 };
-                timer.schedule(timerTask, 500, 500);
+                timer.schedule(timerTask, 300, 300);
 
                 grid.updateGrid(snake);
                 grid.placeApple();
@@ -160,7 +172,7 @@ public class Processing extends PApplet {
                 textSize(30);
                 fill(255);
                 textAlign(LEFT, BASELINE);
-                text("apples eaten: " + snake.getApplesEaten(), 20, 25);
+                text("Score: " + snake.getScore(), 20, 25);
 
                 for (int i = 0; grid.getHeight() > i; i++) {
                     for (int j = 0; grid.getWidth() > j; j++) {
@@ -182,13 +194,31 @@ public class Processing extends PApplet {
                 break;
             case ENTRYGAMEOVER:
                 timer.cancel();
+
+                /*try {
+                    switch (currentGame) {
+                        case ORIGINAL:
+                            player.updateHighscore(dbi, snake.getApplesEaten(), 1);
+                            break;
+                        case CANNIBAL:
+                            player.updateHighscore(dbi, snake.getApplesEaten(), 2);
+                    }
+                } catch (SQLException e) {
+                    System.out.println("not able to update highscore");
+                }*/
+
                 mode = modes.GAMEOVER;
                 break;
             case GAMEOVER:
                 textSize(100);
                 fill(255, 0, 0);
                 textAlign(CENTER, CENTER);
-                text("GAME OVER", 420, 250);
+                text("GAME OVER", 400, 250);
+
+                textSize(30);
+                fill(255);
+                textAlign(CENTER, CENTER);
+                text("Score: " + snake.getScore(), 400, 320);
                 buttonPlayAgain.execute(this);
                 buttonReturnMainMenu.execute(this);
                 break;

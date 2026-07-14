@@ -8,7 +8,7 @@ public class Snake {
     public int headPosX;
     public int headPosY;
 
-    protected int applesEaten = 0;
+    protected int score = 0;
 
     protected ArrayList<Integer> bodyArrayX = new ArrayList<>();
     protected ArrayList<Integer> bodyArrayY = new ArrayList<>();
@@ -29,8 +29,8 @@ public class Snake {
         }
     }
 
-    public int getApplesEaten() {
-        return applesEaten;
+    public int getScore() {
+        return score;
     }
 
     public void move(directions heading, Grid grid) {
@@ -134,7 +134,7 @@ public class Snake {
 
                 grid.updateGrid(this);
 
-                applesEaten++;
+                score += 50;
                 grid.placeApple();
                 break;
             default:
