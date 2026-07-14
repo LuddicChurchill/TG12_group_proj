@@ -3,6 +3,7 @@ package IO;
 import logic.*;
 import processing.core.PApplet;
 
+import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -18,7 +19,7 @@ public class Processing extends PApplet {
     Snake.directions heading;
     Grid grid;
     Snake snake;
-    DatabaseInterface dbi = new DatabaseInterface("localhost:3306", "root", "");
+    DatabaseInterface dbi = new DatabaseInterface("jdbc:mysql://localhost:3306/snake_portal", "root", "");
     Spieler player;
 
     Timer timer;
@@ -58,7 +59,7 @@ public class Processing extends PApplet {
             case temp:
                 dbi.establishConnection();
                 initializeButtons();
-                mode = modes.LOGIN;
+                mode = modes.MAINMENU;
                 break;
             case LOGIN:
                 textSize(100);
@@ -93,6 +94,13 @@ public class Processing extends PApplet {
                 text("Snake Orginal", 150, 325);
                 text("Cannibal Snake", 150, 425);
 
+                /*try {
+                    text("Highscore: " + Spieler.getHighscore(dbi, 1, player.getId()), 150, 360);
+                    text("Highscore: " + Spieler.getHighscore(dbi, 2, player.getId()), 150, 460);
+                } catch (SQLException e) {
+                    System.out.println("not able to get highscore");
+                }*/
+
                 buttonPlayOriginal.execute(this);
                 buttonLeaderboardOriginal.execute(this);
                 buttonPlayCannibal.execute(this);
@@ -100,9 +108,22 @@ public class Processing extends PApplet {
                 break;
             case ENTRYLEADERBOARD:
                 System.out.println(currentGame);
+
                 mode = modes.LEADERBOARD;
                 break;
             case LEADERBOARD:
+                textSize(60);
+                fill(255);
+                textAlign(CENTER, CENTER);
+                text("Leaderboard", 400, 150);
+                textSize(30);
+                switch (currentGame) {
+                    case ORIGINAL:
+                        text("Original Snake", 400 , 200 );
+                    break;
+                    case CANNIBAL:
+                        text("Snake Cannibal", 400 , 200 );
+                }
 
                 buttonBack.execute(this);
                 break;

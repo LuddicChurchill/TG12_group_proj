@@ -21,6 +21,10 @@ public class Spieler {
         this.highscore = highscore;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public Spieler(DatabaseInterface dbi, String name)  throws SQLException {
         String query = "SELECT id, name, passwort, spielerNr FROM Spieler WHERE name = '" + name + "'";
         ResultSet rs = dbi.executeQuery(query);
