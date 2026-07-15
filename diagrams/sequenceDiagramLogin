@@ -1,0 +1,60 @@
+@startuml
+title Login sequence (textfieldPassword.selectNext() -> MAINMENU)
+
+actor User
+participant "textfieldPassword\n(Textfield object)" as PasswordField
+participant "Spieler" as Spieler
+participant "dbi\n(DatabaseInterface Object)" as DBI
+database "database" as DB
+participant "player\n(Spieler object)" as Player
+participant Processing
+
+User -> PasswordField : selectNext()
+
+PasswordField -> Spieler : login(dbi,\ntextfieldUsername.writtenInputToString(),\ntextfieldPassword.writtenInputToString())
+
+activate Spieler
+Spieler -> DBI : executeQuery(\nSELECT passwort...\n)
+activate DBI
+DBI -> DB : SQL Query
+activate DB
+DB --> DBI : ResultSet
+deactivate DB
+DBI --> Spieler : ResultSet
+deactivate DBI
+
+Spieler -> Spieler : compare stored password\nwith entered password
+
+
+alt Login successful
+    Spieler --> PasswordField : true
+    deactivate Spieler
+
+    create Player
+    PasswordField -> Player <<create>> : new Spieler(dbi, username)
+    activate Player
+
+    Player -> DBI : executeQuery(\nSELECT id, name...\n)
+    activate DBI
+    DBI -> DB : SQL Query
+    DB --> DBI : ResultSet
+    DBI --> Player : ResultSet
+    deactivate DBI
+
+    Player --> Processing : save
+    deactivate Player
+
+    PasswordField -> Processing : mode = MAINMENU
+
+else Login failed
+activate Spieler
+
+    Spieler --> PasswordField : false
+    deactivate Spieler
+    
+    PasswordField -> Processing : loginFailed = true
+end
+
+deactivate Spieler
+
+@enduml
