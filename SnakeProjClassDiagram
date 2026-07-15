@@ -1,0 +1,128 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype polyline
+
+class Button {
+  + Button(int, int, int, int, String): 
+  ~ Y: int
+  ~ HEIGHT: int
+  - TEXT: String
+  ~ X: int
+  ~ WIDTH: int
+  ~ executeFunction(): void
+  ~ drawSelf(PApplet): void
+  ~ checkPressed(PApplet): boolean
+  ~ execute(PApplet): void
+}
+class CannibalSnake {
+  + CannibalSnake(Grid): 
+  + move(directions, Grid): void
+}
+class Cell {
+  + Cell(states): 
+  - content: states
+  + getContent(): states
+  + setContent(states): void
+  + isEmpty(): boolean
+}
+class DatabaseInterface {
+  + DatabaseInterface(String, String, String): 
+  ~ pass: String
+  ~ url: String
+  ~ user: String
+  ~ connection: Connection
+  + establishConnection(): void
+  + closeConnection(): void
+  + executeQuery(String): ResultSet
+  + executeUpdate(String): void
+}
+class Grid {
+  + Grid(int, int): 
+  - appleX: int
+  - width: int
+  - appleY: int
+  ~ r: Random
+  - height: int
+  + grid: Cell[][]
+  + getHeight(): int
+  + getWidth(): int
+  + placeApple(): void
+  + updateGrid(Snake): void
+}
+class ProcessorState {
+  ~ ProcessorState(Processor, Log, Source, DeferredCompletionFailureHandler, boolean, ProcessingEnvironment): 
+  + processor: Processor
+  + contributed: boolean
+  - supportedAnnotationPatterns: Set<Pattern>
+  - supportedAnnotationStrings: Set<String>
+  - supportedOptionNames: Set<String>
+  + annotationSupported(String): boolean
+  - checkSourceVersionCompatibility(Source, Log): void
+  + removeSupportedOptions(Set<String>): void
+  - checkOptionName(String, Log): boolean
+}
+class Snake {
+  + Snake(Grid): 
+  + headPosX: int
+  # bodyArrayY: ArrayList<Integer>
+  + headPosY: int
+  # facing: directions
+  # bodyArrayX: ArrayList<Integer>
+  # score: int
+  + move(directions, Grid): void
+  + getScore(): int
+}
+class Spieler {
+  + Spieler(DatabaseInterface, String): 
+  + Spieler(int, String, String, int, int): 
+  - name: String
+  - spielernr: int
+  - id: int
+  - passwort: String
+  - highscore: int
+  + getHighscore(DatabaseInterface, int, int): int
+  + getLeaderboard(DatabaseInterface, int, int): Spieler[]
+  + getId(): int
+  + login(DatabaseInterface, String, String): boolean
+  + getRang(DatabaseInterface, int, String): int
+  + updateHighscore(DatabaseInterface, int, int): void
+}
+class Textfield {
+  + Textfield(int, int, int, int): 
+  ~ active: Textfield
+  ~ writtenInput: ArrayList<Character>
+  ~ drawSelf(PApplet): void
+  ~ execute(PApplet): void
+  ~ writtenInputToString(): String
+  ~ selectNext(): void
+}
+enum directions << enumeration >> {
+  + directions(): 
+  + UP: 
+  + LEFT: 
+  + RIGHT: 
+  + DOWN: 
+  + valueOf(String): directions
+  + values(): directions[]
+}
+enum states << enumeration >> {
+  + states(): 
+  + HEAD: 
+  + APPLE: 
+  + EMPTY: 
+  + BODY: 
+  + valueOf(String): states
+  + values(): states[]
+}
+
+CannibalSnake      -[#000082,plain]-^  Snake             
+Cell              "1" *-[#595959,plain]-> "content\n1" states            
+Grid              "1" *-[#595959,plain]-> "grid\n*" Cell              
+Grid               -[#595959,dashed]->  Cell              : "«create»"
+Snake             "1" *-[#595959,plain]-> "facing\n1" directions        
+Textfield          -[#000082,plain]-^  Button            
+directions         +-[#820000,plain]-  Snake             
+states             +-[#820000,plain]-  Cell              
+@enduml
