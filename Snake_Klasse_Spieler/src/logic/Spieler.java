@@ -25,6 +25,10 @@ public class Spieler {
         return id;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public Spieler(DatabaseInterface dbi, String name)  throws SQLException {
         String query = "SELECT id, name, passwort, spielerNr FROM Spieler WHERE name = '" + name + "'";
         ResultSet rs = dbi.executeQuery(query);
@@ -123,5 +127,16 @@ public class Spieler {
         }
 
         return -1;
+    }
+
+    @Override
+    public String toString() {
+        return "Spieler{" +
+                "spielernr=" + spielernr +
+                ", name='" + name + '\'' +
+                ", id=" + id +
+                ", passwort='" + passwort + '\'' +
+                ", highscore=" + highscore +
+                '}';
     }
 }

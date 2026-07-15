@@ -48,7 +48,8 @@ INSERT INTO Spieler (name, passwort, spielerNr) VALUES
 ('Ekara28', 'test123', 2),
 ('LuddicChurchill', 'test123', 3),
 ('marthehes', 'test123', 4),
-('omezger', 'admin123', 0);
+('omezger', 'test123', 5),
+('HrFrankF', 'test123', 6);
 
 INSERT INTO Highscore (spielerID, spielID, highscore) VALUES
 (1, 1, 0),
@@ -58,4 +59,6 @@ INSERT INTO Highscore (spielerID, spielID, highscore) VALUES
 (3, 1, 0),
 (3, 2, 0),
 (4, 1, 0),
-(4, 2, 0);
+(4, 2, 0),
+(0, 1, 0),
+(0, 2, 0);

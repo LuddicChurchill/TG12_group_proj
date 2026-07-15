@@ -3,6 +3,7 @@ package IO;
 import logic.*;
 import processing.core.PApplet;
 
+import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -59,7 +60,7 @@ public class Processing extends PApplet {
             case temp:
                 dbi.establishConnection();
                 initializeButtons();
-                mode = modes.MAINMENU;
+                mode = modes.LOGIN;
                 break;
             case LOGIN:
                 textSize(100);
@@ -94,12 +95,12 @@ public class Processing extends PApplet {
                 text("Snake Orginal", 150, 325);
                 text("Cannibal Snake", 150, 425);
 
-                /*try {
+                try {
                     text("Highscore: " + Spieler.getHighscore(dbi, 1, player.getId()), 150, 360);
                     text("Highscore: " + Spieler.getHighscore(dbi, 2, player.getId()), 150, 460);
                 } catch (SQLException e) {
                     System.out.println("not able to get highscore");
-                }*/
+                }
 
                 buttonPlayOriginal.execute(this);
                 buttonLeaderboardOriginal.execute(this);
@@ -109,17 +110,17 @@ public class Processing extends PApplet {
             case ENTRYLEADERBOARD:
                 System.out.println(currentGame);
 
-                /*try {
+                try {
                     switch (currentGame) {
                         case ORIGINAL:
-                            leaderboardList = Spieler.getLeaderboard(dbi, 1, 5);
+                            leaderboardList = Spieler.getLeaderboard(dbi, 1, 10);
                             break;
                         case CANNIBAL:
-                            leaderboardList = Spieler.getLeaderboard(dbi, 2, 5);
+                            leaderboardList = Spieler.getLeaderboard(dbi, 2, 10);
                     }
                 } catch (SQLException e) {
                     System.out.println("not able to load leaderboard");
-                }*/
+                }
 
                 mode = modes.LEADERBOARD;
                 break;
@@ -135,6 +136,34 @@ public class Processing extends PApplet {
                         break;
                     case CANNIBAL:
                         text("Snake Cannibal", 400, 200);
+                }
+
+                textSize(20);
+                textAlign(LEFT, CENTER);
+                text("Rank:", 150, 270);
+                text("Player:", 220, 270);
+                text("Highscore:", 550, 270);
+
+                try {
+                    switch (currentGame) {
+                        case ORIGINAL:
+                            for (int i = 0; i < leaderboardList.length; i++) {
+                                if (leaderboardList[i] == null) break;
+                                text((i + 1) + ".", 150, 300 + i * 30);
+                                text(leaderboardList[i].getName(), 220, 300 + i * 30);
+                                text(Spieler.getHighscore(dbi, 1, leaderboardList[i].getId()), 550, 300 + i * 30);
+                            }
+                            break;
+                        case CANNIBAL:
+                            for (int i = 0; i < leaderboardList.length; i++) {
+                                if (leaderboardList[i] == null) break;
+                                text((i + 1) + ".", 150, 300 + i * 30);
+                                text(leaderboardList[i].getName(), 220, 300 + i * 30);
+                                text(Spieler.getHighscore(dbi, 2, leaderboardList[i].getId()), 550, 300 + i * 30);
+                            }
+                    }
+                } catch (SQLException e) {
+                    System.out.println("not able to print highscore");
                 }
 
                 buttonBack.execute(this);
@@ -195,17 +224,17 @@ public class Processing extends PApplet {
             case ENTRYGAMEOVER:
                 timer.cancel();
 
-                /*try {
+                try {
                     switch (currentGame) {
                         case ORIGINAL:
-                            player.updateHighscore(dbi, snake.getApplesEaten(), 1);
+                            player.updateHighscore(dbi, snake.getScore(), 1);
                             break;
                         case CANNIBAL:
-                            player.updateHighscore(dbi, snake.getApplesEaten(), 2);
+                            player.updateHighscore(dbi, snake.getScore(), 2);
                     }
                 } catch (SQLException e) {
                     System.out.println("not able to update highscore");
-                }*/
+                }
 
                 mode = modes.GAMEOVER;
                 break;
@@ -331,6 +360,7 @@ public class Processing extends PApplet {
                 try {
                     if (Spieler.login(dbi, textfieldUsername.writtenInputToString(), textfieldPassword.writtenInputToString())) {
                         player = new Spieler(dbi, textfieldUsername.writtenInputToString());
+                        Processing.mode = modes.MAINMENU;
                     } else {
                         Processing.loginFailed = true;
                     }
