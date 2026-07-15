@@ -7,18 +7,12 @@ import java.sql.SQLException;
 
 public class Spieler {
 
-    private final int spielernr;
     private final String name;
     private final int id;
-    private final String passwort;
-    private final int highscore;
 
-    public Spieler(int spielernr, String passwort, String name, int id, int highscore) {
-        this.spielernr = spielernr;
-        this.passwort = passwort;
+    public Spieler(String name, int id) {
         this.name = name;
         this.id = id;
-        this.highscore = highscore;
     }
 
     public int getId() {
@@ -36,9 +30,6 @@ public class Spieler {
         if (rs != null && rs.next()) {
             this.id = rs.getInt("id");
             this.name = rs.getString("name");
-            this.passwort = rs.getString("passwort");
-            this.spielernr = rs.getInt("spielerNr");
-            this.highscore = -1;
         } else {
             throw new SQLException("Spieler mit Namen '" + name + "' wurde nicht gefunden!");
         }
@@ -95,11 +86,8 @@ public class Spieler {
 
         while (rs.next() && i < amount) {
             leaderboard[i] = new Spieler(
-                    rs.getInt("spielerNr"),
-                    rs.getString("passwort"),
                     rs.getString("name"),
-                    rs.getInt("id"),
-                    rs.getInt("highscore")
+                    rs.getInt("id")
             );
             i++;
         }
@@ -127,16 +115,5 @@ public class Spieler {
         }
 
         return -1;
-    }
-
-    @Override
-    public String toString() {
-        return "Spieler{" +
-                "spielernr=" + spielernr +
-                ", name='" + name + '\'' +
-                ", id=" + id +
-                ", passwort='" + passwort + '\'' +
-                ", highscore=" + highscore +
-                '}';
     }
 }
