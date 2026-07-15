@@ -68,7 +68,7 @@ public class Snake {
                 headNewY = 0;
         }
 
-        if (headNewX == bodyArrayX.get(0) && headNewY == bodyArrayY.get(0)) {
+        if (headNewX == bodyArrayX.getFirst() && headNewY == bodyArrayY.getFirst()) {
             // just doing this whole thing a second time is a very stupid solution to
             // being able to reverse into yourself and die, but I'm too tired to come up
             // with a more sophisticated solution
@@ -103,7 +103,7 @@ public class Snake {
 
         switch (grid.grid[headNewX][headNewY].getContent()) {
             case BODY:
-                if (!(headNewX == bodyArrayX.get(bodyArrayX.size() - 1) && headNewY == bodyArrayY.get(bodyArrayY.size() - 1))) {
+                if (!(headNewX == bodyArrayX.getLast() && headNewY == bodyArrayY.getLast())) {
                     Processing.gameOver();
                     break;
                 }
@@ -119,8 +119,8 @@ public class Snake {
                 headPosY = headNewY;
                 break;
             case APPLE:
-                bodyArrayX.add(bodyArrayX.get(bodyArrayX.size() - 1));
-                bodyArrayY.add(bodyArrayY.get(bodyArrayY.size() - 1));
+                bodyArrayX.add(bodyArrayX.getLast());
+                bodyArrayY.add(bodyArrayY.getLast());
 
                 for (int i = bodyArrayX.size() - 2; i > 0; i--) {
                     bodyArrayX.set(i, bodyArrayX.get(i - 1));

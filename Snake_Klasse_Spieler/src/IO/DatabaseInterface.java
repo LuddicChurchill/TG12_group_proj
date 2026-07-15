@@ -3,9 +3,9 @@ package IO;
 import java.sql.*;
 
 public class DatabaseInterface {
-    String url = "";
-    String user = "root";
-    String pass = "";
+    String url;
+    String user;
+    String pass;
 
     Connection connection = null;
 

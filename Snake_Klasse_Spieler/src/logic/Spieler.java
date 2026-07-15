@@ -7,11 +7,11 @@ import java.sql.SQLException;
 
 public class Spieler {
 
-    private int spielernr;
-    private String name;
-    private int id;
-    private String passwort;
-    private int highscore;
+    private final int spielernr;
+    private final String name;
+    private final int id;
+    private final String passwort;
+    private final int highscore;
 
     public Spieler(int spielernr, String passwort, String name, int id, int highscore) {
         this.spielernr = spielernr;

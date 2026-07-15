@@ -258,7 +258,7 @@ public class Processing extends PApplet {
                 try {
                     if (key == ENTER || key == RETURN) Textfield.active.selectNext();
                     if (key == BACKSPACE && !Textfield.active.writtenInput.isEmpty())
-                        Textfield.active.writtenInput.remove(Textfield.active.writtenInput.size() - 1);
+                        Textfield.active.writtenInput.removeLast();
                 } catch (NullPointerException e) {
                     System.out.println("no Textfield selected");
                 }

@@ -38,8 +38,8 @@ public class Textfield extends Button{
 
     String writtenInputToString() {
         String result = "";
-        for(int i = 0; i < writtenInput.size(); i++){
-            result += writtenInput.get(i);
+        for (Character character : writtenInput) {
+            result += character;
         }
         return result;
     }
