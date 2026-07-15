@@ -108,8 +108,6 @@ public class Processing extends PApplet {
                 buttonLeaderboardCannibal.execute(this);
                 break;
             case ENTRYLEADERBOARD:
-                System.out.println(currentGame);
-
                 try {
                     switch (currentGame) {
                         case ORIGINAL:
@@ -144,26 +142,25 @@ public class Processing extends PApplet {
                 text("Player:", 220, 270);
                 text("Highscore:", 550, 270);
 
-                try {
-                    switch (currentGame) {
-                        case ORIGINAL:
-                            for (int i = 0; i < leaderboardList.length; i++) {
-                                if (leaderboardList[i] == null) break;
-                                text((i + 1) + ".", 150, 300 + i * 30);
-                                text(leaderboardList[i].getName(), 220, 300 + i * 30);
+                for (int i = 0; i < leaderboardList.length; i++) {
+                    if (leaderboardList[i] == null) break;
+
+                    if (player.getId() == leaderboardList[i].getId()) fill(0, 255, 0);
+                    else fill(255);
+
+                    text((i + 1) + ".", 150, 300 + i * 30);
+                    text(leaderboardList[i].getName(), 220, 300 + i * 30);
+                    try {
+                        switch (currentGame) {
+                            case ORIGINAL:
                                 text(Spieler.getHighscore(dbi, 1, leaderboardList[i].getId()), 550, 300 + i * 30);
-                            }
-                            break;
-                        case CANNIBAL:
-                            for (int i = 0; i < leaderboardList.length; i++) {
-                                if (leaderboardList[i] == null) break;
-                                text((i + 1) + ".", 150, 300 + i * 30);
-                                text(leaderboardList[i].getName(), 220, 300 + i * 30);
+                                break;
+                            case CANNIBAL:
                                 text(Spieler.getHighscore(dbi, 2, leaderboardList[i].getId()), 550, 300 + i * 30);
-                            }
+                        }
+                    } catch (SQLException e) {
+                        System.out.println("not able to print highscore");
                     }
-                } catch (SQLException e) {
-                    System.out.println("not able to print highscore");
                 }
 
                 buttonBack.execute(this);
@@ -187,7 +184,7 @@ public class Processing extends PApplet {
                         grid.updateGrid(snake);
                     }
                 };
-                timer.schedule(timerTask, 300, 300);
+                timer.schedule(timerTask, 100, 100);
 
                 grid.updateGrid(snake);
                 grid.placeApple();
@@ -288,7 +285,6 @@ public class Processing extends PApplet {
 
 
     public static void gameOver() {
-        //System.exit(0);
         mode = modes.ENTRYGAMEOVER;
     }
 
