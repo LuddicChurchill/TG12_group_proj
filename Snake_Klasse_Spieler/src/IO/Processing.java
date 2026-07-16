@@ -11,7 +11,7 @@ public class Processing extends PApplet {
     enum modes {ENTRYGAME, GAME, ENTRYGAMEOVER, GAMEOVER, MAINMENU, temp, ENTRYLEADERBOARD, LEADERBOARD, LOGIN}
     static modes mode;
 
-    enum games {ORIGINAL, CANNIBAL}
+    enum games {ORIGINAL, CANNIBAL, PORTAL, FAST}
     static games currentGame;
 
     static boolean loginFailed = false;
@@ -28,11 +28,10 @@ public class Processing extends PApplet {
 
     Button buttonPlayAgain;
     Button buttonReturnMainMenu;
-    Button buttonPlayOriginal;
-    Button buttonPlayCannibal;
-    Button buttonLeaderboardOriginal;
-    Button buttonLeaderboardCannibal;
     Button buttonBack;
+
+    Button[] playButtons = new Button[games.values().length];
+    Button[] leaderboardButtons = new Button[games.values().length];
 
     Textfield textfieldUsername;
     Textfield textfieldPassword;
@@ -94,28 +93,26 @@ public class Processing extends PApplet {
                 textAlign(LEFT, CENTER);
                 text("Snake Orginal", 150, 325);
                 text("Cannibal Snake", 150, 425);
+                text("Portal Snake", 150, 525);
+                text("Fast Snake", 150, 625);
 
                 try {
                     text("Highscore: " + Spieler.getHighscore(dbi, 1, player.getId()), 150, 360);
                     text("Highscore: " + Spieler.getHighscore(dbi, 2, player.getId()), 150, 460);
+                    text("Highscore: " + Spieler.getHighscore(dbi, 3, player.getId()), 150, 560);
+                    text("Highscore: " + Spieler.getHighscore(dbi, 4, player.getId()), 150, 660);
                 } catch (SQLException e) {
                     System.out.println("not able to get highscore");
                 }
 
-                buttonPlayOriginal.execute(this);
-                buttonLeaderboardOriginal.execute(this);
-                buttonPlayCannibal.execute(this);
-                buttonLeaderboardCannibal.execute(this);
+                for (int i = 0; i < games.values().length; i++) {
+                    playButtons[i].execute(this);
+                    leaderboardButtons[i].execute(this);
+                }
                 break;
             case ENTRYLEADERBOARD:
                 try {
-                    switch (currentGame) {
-                        case ORIGINAL:
-                            leaderboardList = Spieler.getLeaderboard(dbi, 1, 10);
-                            break;
-                        case CANNIBAL:
-                            leaderboardList = Spieler.getLeaderboard(dbi, 2, 10);
-                    }
+                    leaderboardList = Spieler.getLeaderboard(dbi, currentGame.ordinal() + 1, 10);
                 } catch (SQLException e) {
                     System.out.println("not able to load leaderboard");
                 }
@@ -134,6 +131,12 @@ public class Processing extends PApplet {
                         break;
                     case CANNIBAL:
                         text("Snake Cannibal", 400, 200);
+                        break;
+                    case PORTAL:
+                        text("Portal Snake", 400, 200);
+                        break;
+                    case FAST:
+                        text("Fast Snake", 400, 200);
                 }
 
                 textSize(20);
@@ -151,29 +154,29 @@ public class Processing extends PApplet {
                     text((i + 1) + ".", 150, 300 + i * 30);
                     text(leaderboardList[i].getName(), 220, 300 + i * 30);
                     try {
-                        switch (currentGame) {
-                            case ORIGINAL:
-                                text(Spieler.getHighscore(dbi, 1, leaderboardList[i].getId()), 550, 300 + i * 30);
-                                break;
-                            case CANNIBAL:
-                                text(Spieler.getHighscore(dbi, 2, leaderboardList[i].getId()), 550, 300 + i * 30);
-                        }
+                        text(Spieler.getHighscore(dbi, currentGame.ordinal() + 1, leaderboardList[i].getId()), 550, 300 + i * 30);
                     } catch (SQLException e) {
                         System.out.println("not able to print highscore");
                     }
                 }
 
+                try {
+                    if (Spieler.getRang(dbi, currentGame.ordinal() + 1, player.getName()) > 10) {
+                        fill(0, 255, 0);
+                        textAlign(CENTER, CENTER);
+                        text("...", 400, 600);
+                        textAlign(LEFT, CENTER);
+                        text(Spieler.getRang(dbi, currentGame.ordinal() + 1, player.getName()), 150, 630);
+                        text(player.getName(), 220, 630);
+                        text(Spieler.getHighscore(dbi, currentGame.ordinal() + 1, player.getId()), 550, 630);
+                    }
+                } catch (SQLException e) {
+                    System.out.println("not able to get rang");
+                }
+
                 buttonBack.execute(this);
                 break;
             case ENTRYGAME:
-                grid = new Grid(20, 20);
-                switch (currentGame) {
-                    case ORIGINAL:
-                        snake = new Snake(grid);
-                        break;
-                    case CANNIBAL:
-                        snake = new CannibalSnake(grid);
-                }
 
                 timer = new Timer();
                 timerTask = new TimerTask() {
@@ -184,7 +187,25 @@ public class Processing extends PApplet {
                         grid.updateGrid(snake);
                     }
                 };
-                timer.schedule(timerTask, 100, 100);
+
+                grid = new Grid(20, 20);
+                switch (currentGame) {
+                    case ORIGINAL:
+                        snake = new Snake(grid);
+                        timer.schedule(timerTask, 120, 120);
+                        break;
+                    case CANNIBAL:
+                        snake = new CannibalSnake(grid);
+                        timer.schedule(timerTask, 120, 120);
+                        break;
+                    case PORTAL:
+                        snake = new PortalSnake(grid);
+                        timer.schedule(timerTask, 120, 120);
+                        break;
+                    case FAST:
+                        snake = new Snake(grid);
+                        timer.schedule(timerTask, 80, 80);
+                }
 
                 grid.updateGrid(snake);
                 grid.placeApple();
@@ -222,13 +243,7 @@ public class Processing extends PApplet {
                 timer.cancel();
 
                 try {
-                    switch (currentGame) {
-                        case ORIGINAL:
-                            player.updateHighscore(dbi, snake.getScore(), 1);
-                            break;
-                        case CANNIBAL:
-                            player.updateHighscore(dbi, snake.getScore(), 2);
-                    }
+                    player.updateHighscore(dbi, snake.getScore(), currentGame.ordinal() + 1);
                 } catch (SQLException e) {
                     System.out.println("not able to update highscore");
                 }
@@ -258,7 +273,7 @@ public class Processing extends PApplet {
                 try {
                     if (key == ENTER || key == RETURN) Textfield.active.selectNext();
                     if (key == BACKSPACE && !Textfield.active.writtenInput.isEmpty())
-                        Textfield.active.writtenInput.removeLast();
+                        Textfield.active.writtenInput.remove(Textfield.active.writtenInput.size() - 1);
                 } catch (NullPointerException e) {
                     System.out.println("no Textfield selected");
                 }
@@ -299,39 +314,8 @@ public class Processing extends PApplet {
         buttonReturnMainMenu = new Button(300, 600, 200, 50, "Return to Menu") {
             @Override
             void executeFunction() {
+                currentGame = null;
                 Processing.mode = modes.MAINMENU;
-            }
-        };
-
-        buttonPlayOriginal = new Button(470, 300, 140, 50, "Play") {
-            @Override
-            void executeFunction() {
-                currentGame = games.ORIGINAL;
-                Processing.mode = modes.ENTRYGAME;
-            }
-        };
-
-        buttonPlayCannibal = new Button(470, 400, 140, 50, "Play") {
-            @Override
-            void executeFunction() {
-                currentGame = games.CANNIBAL;
-                Processing.mode = modes.ENTRYGAME;
-            }
-        };
-
-        buttonLeaderboardOriginal = new Button(630, 300, 140, 50, "Leaderboard") {
-            @Override
-            void executeFunction() {
-                currentGame = games.ORIGINAL;
-                Processing.mode = modes.ENTRYLEADERBOARD;
-            }
-        };
-
-        buttonLeaderboardCannibal = new Button(630, 400, 140, 50, "Leaderboard") {
-            @Override
-            void executeFunction() {
-                currentGame = games.CANNIBAL;
-                Processing.mode = modes.ENTRYLEADERBOARD;
             }
         };
 
@@ -342,6 +326,24 @@ public class Processing extends PApplet {
                 Processing.mode = modes.MAINMENU;
             }
         };
+
+        for (int i = 0; i < games.values().length; i++) {
+            int finalI = i;
+            playButtons[i] = new Button(470, 300 + finalI * 100, 140, 50, "Play") {
+                @Override
+                void executeFunction() {
+                    currentGame = games.values()[finalI];
+                    Processing.mode = modes.ENTRYGAME;
+                }
+            };
+            leaderboardButtons[i] = new Button(630, 300 + i * 100, 140, 50, "Leaderboard") {
+                @Override
+                void executeFunction() {
+                    currentGame = games.values()[finalI];
+                    Processing.mode = modes.ENTRYLEADERBOARD;
+                }
+            };
+        }
 
         textfieldUsername = new Textfield(300, 400, 200, 30) {
             @Override

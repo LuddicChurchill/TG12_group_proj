@@ -43,7 +43,7 @@ public class CannibalSnake extends Snake {
                 headNewY = 0;
         }
 
-        if (headNewX == bodyArrayX.getFirst() && headNewY == bodyArrayY.getFirst()) {
+        if (headNewX == bodyArrayX.get(0) && headNewY == bodyArrayY.get(0)) {
             // just doing this whole thing a second time is a very stupid solution to
             // being able to reverse into yourself and die, but I'm too tired to come up
             // with a more sophisticated solution
@@ -104,8 +104,8 @@ public class CannibalSnake extends Snake {
                 headPosY = headNewY;
                 break;
             case APPLE:
-                bodyArrayX.add(bodyArrayX.getLast());
-                bodyArrayY.add(bodyArrayY.getLast());
+                bodyArrayX.add(bodyArrayX.get(bodyArrayX.size() - 1));
+                bodyArrayY.add(bodyArrayY.get(bodyArrayY.size() - 1));
 
                 for (int i = bodyArrayX.size() - 2; i > 0; i--) {
                     bodyArrayX.set(i, bodyArrayX.get(i - 1));
