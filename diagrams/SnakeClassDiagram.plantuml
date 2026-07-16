@@ -1,0 +1,189 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class Button {
+  + Button(int, int, int, int, String): 
+  ~ X: int
+  ~ Y: int
+  ~ HEIGHT: int
+  - TEXT: String
+  ~ WIDTH: int
+  ~ execute(PApplet): void
+  ~ checkPressed(PApplet): boolean
+  ~ executeFunction(): void
+  ~ drawSelf(PApplet): void
+}
+class CannibalSnake {
+  + CannibalSnake(Grid): 
+  + move(directions, Grid): void
+}
+class Cell {
+  + Cell(states): 
+  - content: states
+  + setContent(states): void
+  + isEmpty(): boolean
+  + getContent(): states
+}
+class DatabaseInterface {
+  + DatabaseInterface(String, String, String): 
+  ~ pass: String
+  ~ connection: Connection
+  ~ url: String
+  ~ user: String
+  + executeQuery(String): ResultSet
+  + executeUpdate(String): void
+  + establishConnection(): void
+  + closeConnection(): void
+}
+class Grid {
+  + Grid(int, int): 
+  + grid: Cell[][]
+  - width: int
+  - appleY: int
+  - height: int
+  ~ r: Random
+  - appleX: int
+  + placeApple(): void
+  + getWidth(): int
+  + getHeight(): int
+  + updateGrid(Snake): void
+}
+class PortalSnake {
+  + PortalSnake(Grid): 
+  + move(directions, Grid): void
+}
+class Processing {
+  + Processing(): 
+  ~ leaderboardButtons: Button[]
+  ~ textfieldPassword: Textfield
+  ~ buttonReturnMainMenu: Button
+  ~ mode: modes
+  ~ leaderboardList: Spieler[]
+  ~ timer: Timer
+  ~ textfieldUsername: Textfield
+  ~ buttonPlayAgain: Button
+  ~ playButtons: Button[]
+  ~ loginFailed: boolean
+  ~ buttonBack: Button
+  ~ player: Spieler
+  ~ snake: Snake
+  ~ dbi: DatabaseInterface
+  ~ currentGame: games
+  ~ grid: Grid
+  ~ heading: directions
+  ~ timerTask: TimerTask
+  + main(String[]): void
+  + draw(): void
+  + gameOver(): void
+  + keyPressed(): void
+  + keyTyped(): void
+  + settings(): void
+  + setup(): void
+  - initializeButtons(): void
+}
+class Snake {
+  + Snake(Grid): 
+  # score: int
+  # facing: directions
+  + headPosX: int
+  + headPosY: int
+  # bodyArrayX: ArrayList<Integer>
+  # bodyArrayY: ArrayList<Integer>
+  + getScore(): int
+  + move(directions, Grid): void
+}
+class Spieler {
+  + Spieler(DatabaseInterface, String): 
+  + Spieler(String, int): 
+  - name: String
+  - id: int
+  + getName(): String
+  + getHighscore(DatabaseInterface, int, int): int
+  + login(DatabaseInterface, String, String): boolean
+  + getId(): int
+  + getRang(DatabaseInterface, int, String): int
+  + getLeaderboard(DatabaseInterface, int, int): Spieler[]
+  + updateHighscore(DatabaseInterface, int, int): void
+}
+class Textfield {
+  + Textfield(int, int, int, int): 
+  ~ active: Textfield
+  ~ writtenInput: ArrayList<Character>
+  ~ drawSelf(PApplet): void
+  ~ writtenInputToString(): String
+  ~ execute(PApplet): void
+  ~ selectNext(): void
+}
+enum directions << enumeration >> {
+  + directions(): 
+  + DOWN: 
+  + UP: 
+  + LEFT: 
+  + RIGHT: 
+  + values(): directions[]
+  + valueOf(String): directions
+}
+enum games << enumeration >> {
+  + games(): 
+  + PORTAL: 
+  + CANNIBAL: 
+  + FAST: 
+  + ORIGINAL: 
+  + values(): games[]
+  + valueOf(String): games
+}
+enum modes << enumeration >> {
+  + modes(): 
+  + ENTRYGAME: 
+  + GAMEOVER: 
+  + GAME: 
+  + ENTRYGAMEOVER: 
+  + LOGIN: 
+  + ENTRYLEADERBOARD: 
+  + LEADERBOARD: 
+  + MAINMENU: 
+  + temp: 
+  + values(): modes[]
+  + valueOf(String): modes
+}
+enum states << enumeration >> {
+  + states(): 
+  + APPLE: 
+  + HEAD: 
+  + BODY: 
+  + EMPTY: 
+  + values(): states[]
+  + valueOf(String): states
+}
+
+CannibalSnake      -[#000082,plain]-^  Snake             
+Cell              "1" *-[#595959,plain]-> "content\n1" states            
+Grid              "1" *-[#595959,plain]-> "grid\n*" Cell              
+Grid               -[#595959,dashed]->  Cell              : "«create»"
+PortalSnake        -[#000082,plain]-^  Snake             
+Processing         -[#595959,dashed]->  Button            : "«create»"
+Processing        "1" *-[#595959,plain]-> "playButtons\n*" Button            
+Processing         -[#595959,dashed]->  CannibalSnake     : "«create»"
+Processing         -[#595959,dashed]->  DatabaseInterface : "«create»"
+Processing        "1" *-[#595959,plain]-> "dbi\n1" DatabaseInterface 
+Processing         -[#595959,dashed]->  Grid              : "«create»"
+Processing        "1" *-[#595959,plain]-> "grid\n1" Grid              
+Processing         -[#595959,dashed]->  PortalSnake       : "«create»"
+Processing        "1" *-[#595959,plain]-> "snake\n1" Snake             
+Processing         -[#595959,dashed]->  Snake             : "«create»"
+Processing        "1" *-[#595959,plain]-> "leaderboardList\n*" Spieler           
+Processing         -[#595959,dashed]->  Spieler           : "«create»"
+Processing        "1" *-[#595959,plain]-> "textfieldUsername\n1" Textfield         
+Processing        "1" *-[#595959,plain]-> "heading\n1" directions        
+Processing        "1" *-[#595959,plain]-> "currentGame\n1" games             
+Processing        "1" *-[#595959,plain]-> "mode\n1" modes             
+Snake             "1" *-[#595959,plain]-> "facing\n1" directions        
+Textfield          -[#000082,plain]-^  Button            
+directions         +-[#820000,plain]-  Snake             
+games              +-[#820000,plain]-  Processing        
+modes              +-[#820000,plain]-  Processing        
+states             +-[#820000,plain]-  Cell              
+@enduml
